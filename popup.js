@@ -1,29 +1,51 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const csvFileInput = document.getElementById("csvFileInput");
-    const runScriptButton = document.getElementById("runScript");
-  
-    runScriptButton.addEventListener("click", function () {
-      // Check if a file is selected
-      if (csvFileInput.files.length > 0) {
-        const file = csvFileInput.files[0];
-  
-        // Read the selected file (assuming CSV)
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          const csvData = event.target.result;
-  
-          // You can process the CSV data here or send it to your content script
-          // For simplicity, we'll just log it to the console
-          console.log("CSV Data:", csvData);
-  
-          // Send a message to your content script to trigger the action
-          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { action: "runScript", csvData });
-          });
-        };
-  
-        reader.readAsText(file);
-      }
-    });
+  const csvFileInput = document.getElementById("csvFileInput");
+  const runScriptButton = document.getElementById("runScript");
+
+  runScriptButton.addEventListener("click", function () {
+    console.log("Run Script Button Clicked...");
+    // Check if a file is selected
+    if (csvFileInput.files.length > 0) {
+      console.log("CSV File Found...");
+      const file = csvFileInput.files[0];
+
+      // Read the selected file (assuming CSV)
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const csvData = event.target.result;
+        const studentNumbers = extractStudentNumbers(csvData);
+
+        for (studentNumber in studentNumbers) {
+          console.log(studentNumber);
+        }
+        
+        // Send a message to your content script to trigger the action
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: "runScript", studentstoselect: studentNumbers });
+        });
+      };
+
+      reader.readAsText(file);
+    }
   });
   
+  // Function to extract student numbers from the CSV
+  function extractStudentNumbers(csvData) {
+    const lines = csvData.split('\n');
+    const headers = lines[0].split(',');
+    const studentNumberIndex = headers.indexOf('student_studentNumber');
+    
+    if (studentNumberIndex === -1) {
+      console.error('Header "student_studentNumber" not found in CSV.');
+      return [];
+    }
+    
+    const studentNumbers = [];
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',');
+      studentNumbers.push(values[studentNumberIndex]);
+    }
+    
+    return studentNumbers;
+  }
+});
