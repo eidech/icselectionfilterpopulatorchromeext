@@ -31,8 +31,11 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Function to extract student numbers from the CSV
   function extractStudentNumbers(csvData) {
+    console.log("Extracting student numbers...")
+    csvData = csvData.replace(/\r/g, '');
     const lines = csvData.split('\n');
     const headers = lines[0].split(',');
+    console.log(headers);
     const studentNumberIndex = headers.indexOf('student_studentNumber');
     
     if (studentNumberIndex === -1) {
@@ -43,7 +46,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const studentNumbers = [];
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',');
-      studentNumbers.push(values[studentNumberIndex]);
+      if (values.length === 1) {
+        console.log("Pushing Single Column Data...");
+        studentNumbers.push(values[0].trim());
+      } else {
+        studentNumbers.push(values[studentNumberIndex]);
+      }
     }
     
     return studentNumbers;
