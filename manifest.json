@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Infinite Campus Selection Filter Populator",
-    "version": "1.0",
+    "version": "1.0.1",
     "description": "Populate a ad hoc selection filter in Infinite Campus by using student numbers in a CSV file.",
     "permissions": [
       "activeTab"
