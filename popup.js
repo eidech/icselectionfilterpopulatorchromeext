@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const runScriptButton = document.getElementById("runScript");
   const headerList = document.getElementById("headerList");
   const headerSelect = document.getElementById("headerSelect");
+  const newLookCheckbox = document.getElementById("newLookCheckbox");
 
   // Event listener for file input change
   csvFileInput.addEventListener("change", function () {
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const file = csvFileInput.files[0];
 
       const selectedHeader = headerSelect.value; // Get the selected header
+      const newLook = newLookCheckbox.checked;
 
       if (selectedHeader) {
         // Read the selected file (assuming CSV)
@@ -53,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
           
           // Send a message to your content script to trigger the action
           chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { action: "runScript", studentstoselect: studentNumbers });
+            chrome.tabs.sendMessage(tabs[0].id, { action: "runScript", studentstoselect: studentNumbers, newlook: newLook });
           });
         };
         
